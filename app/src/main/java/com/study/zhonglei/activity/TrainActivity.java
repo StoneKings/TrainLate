@@ -6,7 +6,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +26,12 @@ import java.util.Date;
 public class TrainActivity extends Activity {
 
 
-    private EditText czText;
+    private AutoCompleteTextView czText;
     private EditText ccText;
     private TextView textView;
+    private RadioGroup radioGroup ;
+    private RadioButton radioButton;
+
 
     private Handler handler = new Handler(){
         @Override
@@ -33,6 +39,7 @@ public class TrainActivity extends Activity {
             super.handleMessage(msg);
             textView = (TextView) findViewById(R.id.showResult);
             textView.setText(msg.obj.toString());
+
         }
 
     };
@@ -41,11 +48,18 @@ public class TrainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_train);
+        czText = (AutoCompleteTextView) findViewById(R.id.czText);
+        ccText = (EditText) findViewById(R.id.ccText);
+        radioGroup = (RadioGroup) findViewById(R.id.cxlx);
+
+        czText.setThreshold(1);
+        String[]  countries_array = getResources().getStringArray(R.array.citys);
+        SearchAdapter<String> czs = new SearchAdapter<>(this,android.R.layout.simple_list_item_1,countries_array,SearchAdapter.ALL);
+        czText.setAdapter(czs);
     }
 
+
     public void searchInfo(View view){
-        czText = (EditText) findViewById(R.id.czText);
-        ccText = (EditText) findViewById(R.id.ccText);
 
         final String cz = czText.getText().toString().trim();
         final String cc = ccText.getText().toString().trim();
@@ -61,10 +75,16 @@ public class TrainActivity extends Activity {
                  String path = "http://dynamic.12306.cn/map_zwdcx/cx.jsp?";
                  path += "cz=" + URLEncoder.encode(cz.trim());
                  path += "&cc=" + cc.trim();
-                 path += "&cxlx=" + 0;
+                if(radioGroup.getCheckedRadioButtonId()==R.id.fc)
+                {
+                    path += "&cxlx=" + 1;
+                }else{
+                    path += "&cxlx=" + 0;
+                }
                  path += "&rq="  + changeDate();
                  path += "&czEn=" + URLEncoder.encode(cz.trim()).replace("%","-");
                  path += "&tp=" + new Date().getTime();
+                 System.out.println(path);
                  try {
                      URL url = new URL(path );
                      HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -100,7 +120,7 @@ public class TrainActivity extends Activity {
 
 
     public String changeDate(){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String date = simpleDateFormat.format(new Date());
         return date;
     }
