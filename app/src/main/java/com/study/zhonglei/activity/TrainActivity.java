@@ -13,6 +13,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.study.zhonglei.Task.TrainTask;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -61,63 +63,45 @@ public class TrainActivity extends Activity {
 
     public void searchInfo(View view){
 
-        final String cz = czText.getText().toString().trim();
-        final String cc = ccText.getText().toString().trim();
-        if(TextUtils.isEmpty(cc) || TextUtils.isEmpty(cz)){
-            Toast.makeText(this,"请输入正缺的内容", Toast.LENGTH_SHORT).show();
+
+        String path = getPath();
+        if(path ==null){
             return;
         }
-          new Thread(new Runnable() {
-             @Override
-             public void run() {
 
-
-                 String path = "http://dynamic.12306.cn/map_zwdcx/cx.jsp?";
-                 path += "cz=" + URLEncoder.encode(cz.trim());
-                 path += "&cc=" + cc.trim();
-                if(radioGroup.getCheckedRadioButtonId()==R.id.fc)
-                {
-                    path += "&cxlx=" + 1;
-                }else{
-                    path += "&cxlx=" + 0;
-                }
-                 path += "&rq="  + changeDate();
-                 path += "&czEn=" + URLEncoder.encode(cz.trim()).replace("%","-");
-                 path += "&tp=" + new Date().getTime();
-                 System.out.println(path);
-                 try {
-                     URL url = new URL(path );
-                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-
-                     httpURLConnection.setRequestMethod("GET");
-                     httpURLConnection.setConnectTimeout(5000);
-                     httpURLConnection.setReadTimeout(5000);
-                     if(httpURLConnection.getResponseCode() == 200){
-
-                         InputStream inputStream = httpURLConnection.getInputStream();
-                         InputStreamReader isr = new InputStreamReader(inputStream, "GB2312");//添加这一句话设置相应编码格式
-
-                         BufferedReader br=new BufferedReader(isr);
-                         String temp=null;
-
-                         String text ="";
-                         while ((temp =br.readLine()) !=null) {
-                             text +=temp;
-                         }
-                         Message msg = handler.obtainMessage();
-                         msg.obj = text;
-                         handler.sendMessage(msg);
-                     }
-                 } catch (Exception e) {
-                     e.printStackTrace();
-                 }
-
-             }
-         }).start();
+        TrainTask trainTask = new TrainTask(this, path, new TrainTask.TrainCallBack() {
+            @Override
+            public void callBack(Object o) {
+                textView = (TextView) findViewById(R.id.showResult);
+                textView.setText(o.toString());
+            }
+        });
+        trainTask.execute();
 
 
     }
 
+    public String getPath(){
+        String cz = czText.getText().toString().trim();
+        String cc = ccText.getText().toString().trim();
+        if(TextUtils.isEmpty(cc) || TextUtils.isEmpty(cz)){
+            Toast.makeText(this,"请输入正缺的内容", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        String path = "http://dynamic.12306.cn/map_zwdcx/cx.jsp?";
+        path += "cz=" + URLEncoder.encode(cz.trim());
+        path += "&cc=" + cc.trim();
+        if(radioGroup.getCheckedRadioButtonId()==R.id.fc)
+        {
+            path += "&cxlx=" + 1;
+        }else{
+            path += "&cxlx=" + 0;
+        }
+        path += "&rq="  + changeDate();
+        path += "&czEn=" + URLEncoder.encode(cz.trim()).replace("%","-");
+        path += "&tp=" + new Date().getTime();
+        return path;
+    }
 
     public String changeDate(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
