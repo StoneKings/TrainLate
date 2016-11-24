@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TrainLate</string>
+    <string name="app_name">列车正晚点</string>
     <string-array name="citys">
         <item>栟茶</item>
         <item>阿城</item>
