@@ -83,6 +83,15 @@
         android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/showResult"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/useTip"
+        android:text="使用说明: \n1.本查询仅提供过去1小时和未来3小时内列车正晚点信息；\n2.“车站”“车次”是必填项；车站输入支持拼音首字母输入，例如:[北京]->BJ；\n3.所有查询条件必须完全准确，以确保能够查询到所需信息；\n4.本功能及查询结果仅作为参考，准确信息以车站公告为准。\n"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

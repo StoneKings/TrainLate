@@ -32,19 +32,7 @@ public class TrainActivity extends Activity {
     private EditText ccText;
     private TextView textView;
     private RadioGroup radioGroup ;
-    private RadioButton radioButton;
 
-
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            textView = (TextView) findViewById(R.id.showResult);
-            textView.setText(msg.obj.toString());
-
-        }
-
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
